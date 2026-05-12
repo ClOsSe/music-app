@@ -3,9 +3,8 @@ import type { Track } from "@music-app/shared";
 import { AddTrackForm } from "./add-track-form";
 import { AdminAuthGuard } from "./admin-auth-guard";
 import { LogoutButton } from "./logout-button";
-import { AdminUser } from "./admin-user";
 import { DeleteTrackButton } from "./delete-track-button";
-
+import { EditTrackButton } from "./edit-track-button";
 export default async function AdminPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -22,7 +21,6 @@ export default async function AdminPage() {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold">Admin Panel</h1>
-          <AdminUser />
         </div>
 
         <LogoutButton />
@@ -41,7 +39,7 @@ export default async function AdminPage() {
                   <p className="font-medium">{track.title}</p>
                   <p className="text-sm text-gray-500">{track.artist}</p>
                 </div>
-
+                <EditTrackButton track={track} />
                 <DeleteTrackButton id={track.id} />
               </div>
             </div>
