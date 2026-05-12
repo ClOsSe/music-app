@@ -16,3 +16,19 @@ export async function getTrackAudioUrl(
 
   return getTrackStreamUrl(track.audio_url);
 }
+
+export async function fetchTrackAudio(
+  audioUrl: string,
+  rangeHeader: string | null
+) {
+  const headers = new Headers();
+
+  if (rangeHeader) {
+    headers.set("Range", rangeHeader);
+  }
+
+  return fetch(audioUrl, {
+    headers,
+    signal: AbortSignal.timeout(10000),
+  });
+}
