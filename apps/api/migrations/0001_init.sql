@@ -1,0 +1,8 @@
+CREATE TABLE tracks (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  artist TEXT NOT NULL,
+  audio_url TEXT NOT NULL,
+  cover_url TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);

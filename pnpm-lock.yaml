@@ -205,7 +205,24 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    dependencies:
+      bcryptjs:
+        specifier: ^3.0.3
+        version: 3.0.3
+      hono:
+        specifier: ^4.12.18
+        version: 4.12.18
+    devDependencies:
+      '@cloudflare/workers-types':
+        specifier: ^4.20260511.1
+        version: 4.20260511.1
+      '@types/bcryptjs':
+        specifier: ^3.0.0
+        version: 3.0.0
+      wrangler:
+        specifier: ^4.90.0
+        version: 4.90.0(@cloudflare/workers-types@4.20260511.1)
 
   apps/api:
     dependencies:
@@ -218,7 +235,7 @@ importers:
     devDependencies:
       wrangler:
         specifier: ^4.4.0
-        version: 4.90.0
+        version: 4.90.0(@cloudflare/workers-types@4.20260511.1)
 
   apps/web:
     dependencies:
@@ -457,6 +474,9 @@ packages:
     engines: {node: '>=16'}
     cpu: [x64]
     os: [win32]
+
+  '@cloudflare/workers-types@4.20260511.1':
+    resolution: {integrity: sha512-FA+si7cOq9i/gtCHhIc0XJL0l1F/ApF+m00752Aj7WZFJrj3ZulT2T8/+rT3BabMT0QEnqFEGIqCgrmqhgEfMg==}
 
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
@@ -1855,6 +1875,10 @@ packages:
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
 
+  '@types/bcryptjs@3.0.0':
+    resolution: {integrity: sha512-WRZOuCuaz8UcZZE4R5HXTco2goQSI2XxjGY3hbM/xDvwmqFWd4ivooImsMx65OKM6CtNKbnZ5YL+YwAwK7c1dg==}
+    deprecated: This is a stub types definition. bcryptjs provides its own type definitions, so you do not need this installed.
+
   '@types/estree@1.0.9':
     resolution: {integrity: sha512-GhdPgy1el4/ImP05X05Uw4cw2/M93BCUmnEvWZNStlCzEKME4Fkk+YpoA5OiHNQmoS7Cafb8Xa3Pya8m1Qrzeg==}
 
@@ -2166,6 +2190,10 @@ packages:
   baseline-browser-mapping@2.10.29:
     resolution: {integrity: sha512-Asa2krT+XTPZINCS+2QcyS8WTkObE77RwkydwF7h6DmnKqbvlalz93m/dnphUyCa6SWSP51VgtEUf2FN+gelFQ==}
     engines: {node: '>=6.0.0'}
+    hasBin: true
+
+  bcryptjs@3.0.3:
+    resolution: {integrity: sha512-GlF5wPWnSa/X5LKM1o0wz0suXIINz1iHRLvTS+sLyi7XPbe5ycmYI3DlZqVGZZtDgl4DmasFg7gOB3JYbphV5g==}
     hasBin: true
 
   blake3-wasm@2.1.5:
@@ -4451,6 +4479,8 @@ snapshots:
   '@cloudflare/workerd-windows-64@1.20260507.1':
     optional: true
 
+  '@cloudflare/workers-types@4.20260511.1': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -5750,6 +5780,10 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
+  '@types/bcryptjs@3.0.0':
+    dependencies:
+      bcryptjs: 3.0.3
+
   '@types/estree@1.0.9': {}
 
   '@types/json-schema@7.0.15': {}
@@ -6061,6 +6095,8 @@ snapshots:
   balanced-match@4.0.4: {}
 
   baseline-browser-mapping@2.10.29: {}
+
+  bcryptjs@3.0.3: {}
 
   blake3-wasm@2.1.5: {}
 
@@ -8378,7 +8414,7 @@ snapshots:
       '@cloudflare/workerd-linux-arm64': 1.20260507.1
       '@cloudflare/workerd-windows-64': 1.20260507.1
 
-  wrangler@4.90.0:
+  wrangler@4.90.0(@cloudflare/workers-types@4.20260511.1):
     dependencies:
       '@cloudflare/kv-asset-handler': 0.5.0
       '@cloudflare/unenv-preset': 2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260507.1)
@@ -8389,6 +8425,7 @@ snapshots:
       unenv: 2.0.0-rc.24
       workerd: 1.20260507.1
     optionalDependencies:
+      '@cloudflare/workers-types': 4.20260511.1
       fsevents: 2.3.3
     transitivePeerDependencies:
       - bufferutil

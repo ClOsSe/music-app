@@ -25,5 +25,14 @@
       "workerd",
       "esbuild"
     ]
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260511.1",
+    "@types/bcryptjs": "^3.0.0",
+    "wrangler": "^4.90.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "hono": "^4.12.18"
   }
 }

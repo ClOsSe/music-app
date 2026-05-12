@@ -1,7 +1,15 @@
+/// <reference types="@cloudflare/workers-types" />
+
 import { Hono } from "hono";
-import type { HealthResponse } from "@music-app/shared";
+import { cors } from "hono/cors";
+
+import { healthRoutes } from "./routes/health";
+import { tracksRoutes } from "./routes/tracks";
+import { authRoutes } from "./routes/auth";
 
 const app = new Hono();
+
+app.use("*", cors());
 
 app.get("/", (c) => {
   return c.json({
@@ -10,12 +18,8 @@ app.get("/", (c) => {
   });
 });
 
-app.get("/health", (c) => {
-  const response: HealthResponse = {
-    status: "healthy",
-  };
-
-  return c.json(response);
-});
+app.route("/", healthRoutes);
+app.route("/", tracksRoutes);
+app.route("/", authRoutes);
 
 export default app;
