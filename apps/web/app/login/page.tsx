@@ -1,5 +1,5 @@
 "use client";
-
+import type { ApiError, ApiSuccess, LoginResponse } from "@music-app/shared";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { API_URL } from "../lib/api";
@@ -29,9 +29,9 @@ export default function LoginPage() {
         }),
       });
 
-      const data = await res.json();
+      const data = (await res.json()) as ApiSuccess<LoginResponse> | ApiError;
 
-      if (!res.ok) {
+      if (!data.success) {
         alert(data.message);
         return;
       }
