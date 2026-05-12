@@ -1,5 +1,8 @@
 import { Hono } from "hono";
-import type { CreateTrackInput } from "@music-app/shared";
+import type { CreateTrackInput,
+  CreateTrackResponse,
+  DeleteTrackResponse,
+  UpdateTrackResponse, } from "@music-app/shared";
 import { createTrack, deleteTrack, getTracks, updateTrack, } from "../services/tracks.service";
 import { validateCreateTrackInput } from "../validators/tracks.validator";
 import { badRequest, created } from "./lib/http";
@@ -43,7 +46,7 @@ tracksRoutes.post(
     const result = await createTrack(c.env.DB, body);
 
     return c.json(
-      created({
+      created<CreateTrackResponse>({
         id: result.meta.last_row_id,
       }),
       201
@@ -71,7 +74,7 @@ tracksRoutes.delete(
       success: true,
       data: {
         id,
-      },
+      } satisfies DeleteTrackResponse,
     });
   }
 );
@@ -104,7 +107,7 @@ tracksRoutes.put(
       success: true,
       data: {
         id,
-      },
+      } satisfies UpdateTrackResponse,
     });
   }
 );

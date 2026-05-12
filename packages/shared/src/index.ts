@@ -57,3 +57,10 @@ export type LoginResponse = {
 export type RegisterResponse = {
   id: number;
 };
+export type TrackMutationResponse = {
+  id: number;
+};
+
+export type CreateTrackResponse = TrackMutationResponse;
+export type UpdateTrackResponse = TrackMutationResponse;
+export type DeleteTrackResponse = TrackMutationResponse;
