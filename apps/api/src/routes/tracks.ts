@@ -5,6 +5,7 @@ import { validateCreateTrackInput } from "../validators/tracks.validator";
 import { badRequest, created } from "./lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
 import { getCurrentUser } from "./lib/auth";
+import { requireAdmin } from "../middlewares/admin.middleware";
 
 type Bindings = {
   DB: D1Database;
@@ -26,6 +27,7 @@ tracksRoutes.post(
 
     return middleware(c, next);
   },
+  requireAdmin,
   async (c) => {
     const user = getCurrentUser(c);
     console.log(user);
