@@ -1,8 +1,8 @@
 "use client";
-import type { ApiError, ApiSuccess, LoginResponse } from "@music-app/shared";
+import type { ApiSuccess, LoginResponse } from "@music-app/shared";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { API_URL } from "../lib/api";
+import { apiFetch } from "../lib/fetcher";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -18,23 +18,13 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const res = await fetch(`${API_URL}/auth/login`, {
+      const data = await apiFetch<ApiSuccess<LoginResponse>>("/auth/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify({
           email,
           password,
         }),
       });
-
-      const data = (await res.json()) as ApiSuccess<LoginResponse> | ApiError;
-
-      if (!data.success) {
-        alert(data.message);
-        return;
-      }
 
       localStorage.setItem("token", data.data.token);
 
