@@ -7,9 +7,9 @@ import { healthRoutes } from "./routes/health";
 import { tracksRoutes } from "./routes/tracks";
 import { authRoutes } from "./routes/auth";
 import { mediaRoutes } from "./routes/media";
-import { requestLogger } from "./middlewares/logger.middleware";
-
 import { requestId } from "./middlewares/request-id.middleware";
+import { requestLogger } from "./middlewares/logger.middleware";
+import { errorHandler } from "./middlewares/error.middleware";
 
 
 const app = new Hono();
@@ -25,9 +25,11 @@ app.get("/", (c) => {
   });
 });
 
+
 app.route("/", healthRoutes);
 app.route("/", tracksRoutes);
 app.route("/", authRoutes);
 app.route("/", mediaRoutes);
 
+app.onError(errorHandler);
 export default app;
