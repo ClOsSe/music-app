@@ -19,7 +19,7 @@ import { requireAdmin } from "../middlewares/admin.middleware";
 import { getEnv } from "../lib/env";
 import type { AppHonoEnv } from "../types/env";
 import { createTrackSchema } from "../validators/tracks.schema";
-
+import { validateJson } from "../lib/validation";
 export const tracksRoutes = new Hono<AppHonoEnv>();
 
 tracksRoutes.get("/tracks", async (c) => {
@@ -79,7 +79,10 @@ tracksRoutes.post(
     const env = getEnv(c.env);
     const body = await c.req.json();
 
-    const parsed = createTrackSchema.safeParse(body);
+    const parsed = validateJson(
+      createTrackSchema,
+      body
+    );
 
     if (!parsed.success) {
       return c.json(
@@ -148,7 +151,10 @@ tracksRoutes.put(
 
     const body = await c.req.json();
 
-    const parsed = createTrackSchema.safeParse(body);
+    const parsed = validateJson(
+      createTrackSchema,
+      body
+    );
 
     if (!parsed.success) {
       return c.json(

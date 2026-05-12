@@ -15,6 +15,7 @@ import {
   loginSchema,
   registerSchema,
 } from "../validators/auth.schema";
+import { validateJson } from "../lib/validation";
 
 export const authRoutes = new Hono<AppHonoEnv>();
 
@@ -23,7 +24,10 @@ authRoutes.post("/auth/register", async (c) => {
     const env = getEnv(c.env);
     const body = await c.req.json();
 
-    const parsed = registerSchema.safeParse(body);
+    const parsed = validateJson(
+      registerSchema,
+      body
+    );
 
     if (!parsed.success) {
       return c.json(
@@ -63,7 +67,10 @@ authRoutes.post("/auth/login", async (c) => {
     const env = getEnv(c.env);
     const body = await c.req.json();
 
-    const parsed = loginSchema.safeParse(body);
+    const parsed = validateJson(
+      loginSchema,
+      body
+    );
 
     if (!parsed.success) {
       return c.json(
