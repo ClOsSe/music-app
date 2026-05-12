@@ -29,3 +29,35 @@ export async function insertTrack(
     .bind(title, artist, audio_url, cover_url)
     .run();
 }
+
+export async function deleteTrackById(
+  db: D1Database,
+  id: number
+) {
+  return db
+    .prepare("DELETE FROM tracks WHERE id = ?")
+    .bind(id)
+    .run();
+}
+
+export async function updateTrackById(
+  db: D1Database,
+  id: number,
+  input: CreateTrackInput
+) {
+  const { title, artist, audio_url, cover_url = null } = input;
+
+  return db
+    .prepare(
+      `
+      UPDATE tracks
+      SET title = ?,
+          artist = ?,
+          audio_url = ?,
+          cover_url = ?
+      WHERE id = ?
+      `
+    )
+    .bind(title, artist, audio_url, cover_url, id)
+    .run();
+}
