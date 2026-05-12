@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "@music-app/shared": "workspace:*",
-    "hono": "^4.12.18"
+    "hono": "^4.12.18",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "wrangler": "^4.4.0"

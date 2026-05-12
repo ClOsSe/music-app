@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import type {
-  CreateTrackInput,
   CreateTrackResponse,
   DeleteTrackResponse,
   UpdateTrackResponse,
@@ -14,15 +13,14 @@ import {
   getTracksPaginated,
   updateTrack,
 } from "../services/tracks.service";
-import { validateCreateTrackInput } from "../validators/tracks.validator";
-import { badRequest, created,notFound } from "../lib/http";
+import { badRequest, created, notFound } from "../lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/admin.middleware";
 import { getEnv } from "../lib/env";
-import { AppHonoEnv } from "../types/env";
+import type { AppHonoEnv } from "../types/env";
+import { createTrackSchema } from "../validators/tracks.schema";
 
-
-export const tracksRoutes =new Hono<AppHonoEnv>();
+export const tracksRoutes = new Hono<AppHonoEnv>();
 
 tracksRoutes.get("/tracks", async (c) => {
   const env = getEnv(c.env);
@@ -79,15 +77,20 @@ tracksRoutes.post(
   requireAdmin,
   async (c) => {
     const env = getEnv(c.env);
-    const body = await c.req.json<CreateTrackInput>();
+    const body = await c.req.json();
 
-    const error = validateCreateTrackInput(body);
+    const parsed = createTrackSchema.safeParse(body);
 
-    if (error) {
-      return c.json(badRequest(error), 400);
+    if (!parsed.success) {
+      return c.json(
+        badRequest(
+          parsed.error.issues[0]?.message ?? "Invalid input"
+        ),
+        400
+      );
     }
 
-    const result = await createTrack(env.DB, body);
+    const result = await createTrack(env.DB, parsed.data);
 
     return c.json(
       created<CreateTrackResponse>({
@@ -143,15 +146,20 @@ tracksRoutes.put(
       return c.json(badRequest("Invalid track id"), 400);
     }
 
-    const body = await c.req.json<CreateTrackInput>();
+    const body = await c.req.json();
 
-    const error = validateCreateTrackInput(body);
+    const parsed = createTrackSchema.safeParse(body);
 
-    if (error) {
-      return c.json(badRequest(error), 400);
+    if (!parsed.success) {
+      return c.json(
+        badRequest(
+          parsed.error.issues[0]?.message ?? "Invalid input"
+        ),
+        400
+      );
     }
 
-    await updateTrack(env.DB, id, body);
+    await updateTrack(env.DB, id, parsed.data);
 
     return c.json({
       success: true,

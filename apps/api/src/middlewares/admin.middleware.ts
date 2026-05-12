@@ -5,11 +5,13 @@ export async function requireAdmin(
   c: Context,
   next: Next
 ) {
-  const payload = c.get("jwtPayload") as {
-    role?: string;
-  };
+  const payload = c.get("jwtPayload") as
+    | {
+        role?: string;
+      }
+    | undefined;
 
-  if (payload.role !== "admin") {
+  if (!payload || payload.role !== "admin") {
     return c.json(forbidden(), 403);
   }
 

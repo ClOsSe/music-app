@@ -232,6 +232,9 @@ importers:
       hono:
         specifier: ^4.12.18
         version: 4.12.18
+      zod:
+        specifier: ^4.4.3
+        version: 4.4.3
     devDependencies:
       wrangler:
         specifier: ^4.4.0
