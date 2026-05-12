@@ -15,11 +15,12 @@ import {
   updateTrack,
 } from "../services/tracks.service";
 import { validateCreateTrackInput } from "../validators/tracks.validator";
-import { badRequest, created } from "./lib/http";
+import { badRequest, created,notFound } from "../lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/admin.middleware";
 import { getEnv } from "../lib/env";
 import { AppBindings } from "./types/env";
+
 
 export const tracksRoutes = new Hono<{
   Bindings: AppBindings ;
@@ -63,7 +64,7 @@ tracksRoutes.get("/tracks/:id", async (c) => {
   const track = await getTrackById(env.DB, id);
 
   if (!track) {
-    return c.json(badRequest("Track not found"), 404);
+    return c.json(notFound("Track not found"), 404);
   }
 
   return c.json(track);

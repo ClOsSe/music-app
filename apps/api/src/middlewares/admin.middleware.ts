@@ -1,4 +1,5 @@
 import type { Context, Next } from "hono";
+import { forbidden } from "../lib/http";
 
 export async function requireAdmin(
   c: Context,
@@ -9,13 +10,7 @@ export async function requireAdmin(
   };
 
   if (payload.role !== "admin") {
-    return c.json(
-      {
-        success: false,
-        message: "Forbidden",
-      },
-      403
-    );
+    return c.json(forbidden(), 403);
   }
 
   await next();

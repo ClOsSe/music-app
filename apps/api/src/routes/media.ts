@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 
 import { getTrackAudioUrl } from "../services/media.service";
-import { badRequest } from "./lib/http";
+import { badRequest } from "../lib/http";
 import { getEnv } from "../lib/env";
 import type { AppBindings } from "./types/env";
 

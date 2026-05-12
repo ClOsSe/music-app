@@ -12,7 +12,7 @@ import {
   loginUser,
   registerUser,
 } from "../services/auth.service";
-import { badRequest, created } from "./lib/http";
+import { badRequest, created } from "../lib/http";
 
 import type { RegisterResponse } from "@music-app/shared";
 
