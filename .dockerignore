@@ -1,0 +1,7 @@
+node_modules
+.next
+.wrangler
+.git
+.env
+.env.local
+dist

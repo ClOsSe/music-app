@@ -7,6 +7,7 @@
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@music-app/shared": "workspace:*",
     "hono": "^4.12.18"
   },
   "devDependencies": {

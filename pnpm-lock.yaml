@@ -209,6 +209,9 @@ importers:
 
   apps/api:
     dependencies:
+      '@music-app/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       hono:
         specifier: ^4.12.18
         version: 4.12.18

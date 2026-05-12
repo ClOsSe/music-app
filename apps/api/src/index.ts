@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import type { HealthResponse } from "@music-app/shared";
 
 const app = new Hono();
 
@@ -10,9 +11,11 @@ app.get("/", (c) => {
 });
 
 app.get("/health", (c) => {
-  return c.json({
+  const response: HealthResponse = {
     status: "healthy",
-  });
+  };
+
+  return c.json(response);
 });
 
 export default app;
