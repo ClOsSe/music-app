@@ -3,7 +3,13 @@ import type { CreateTrackInput,
   CreateTrackResponse,
   DeleteTrackResponse,
   UpdateTrackResponse, } from "@music-app/shared";
-import { createTrack, deleteTrack, getTracks, updateTrack, } from "../services/tracks.service";
+import { createTrack,
+  deleteTrack,
+  getTrackById,
+  getTracks,
+  getTracksPaginated,
+  updateTrack,
+ } from "../services/tracks.service";
 import { validateCreateTrackInput } from "../validators/tracks.validator";
 import { badRequest, created } from "./lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
@@ -18,10 +24,45 @@ type Bindings = {
 export const tracksRoutes = new Hono<{ Bindings: Bindings }>();
 
 tracksRoutes.get("/tracks", async (c) => {
+  const search = c.req.query("search");
+  const page = Number(c.req.query("page") ?? 1);
+  const limit = Number(c.req.query("limit") ?? 10);
+
+  if (
+    c.req.query("page") ||
+    c.req.query("limit") ||
+    search
+  ) {
+    const result = await getTracksPaginated(
+      c.env.DB,
+      search,
+      Number.isNaN(page) ? 1 : page,
+      Number.isNaN(limit) ? 10 : limit
+    );
+
+    return c.json(result);
+  }
+
   const tracks = await getTracks(c.env.DB);
 
   return c.json(tracks);
 });
+tracksRoutes.get("/tracks/:id", async (c) => {
+  const id = Number(c.req.param("id"));
+
+  if (Number.isNaN(id)) {
+    return c.json(badRequest("Invalid track id"), 400);
+  }
+
+  const track = await getTrackById(c.env.DB, id);
+
+  if (!track) {
+    return c.json(badRequest("Track not found"), 404);
+  }
+
+  return c.json(track);
+});
+
 
 tracksRoutes.post(
   "/tracks",

@@ -64,3 +64,18 @@ export type TrackMutationResponse = {
 export type CreateTrackResponse = TrackMutationResponse;
 export type UpdateTrackResponse = TrackMutationResponse;
 export type DeleteTrackResponse = TrackMutationResponse;
+
+
+export type TracksQuery = {
+  search?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type PaginatedTracksResponse = {
+  items: Track[];
+  page: number;
+  limit: number;
+  total: number;
+  total_pages: number;
+};
