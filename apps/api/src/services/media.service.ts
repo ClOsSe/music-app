@@ -32,3 +32,23 @@ export async function fetchTrackAudio(
     signal: AbortSignal.timeout(10000),
   });
 }
+export async function getTrackCoverUrl(
+  db: D1Database,
+  trackId: number
+) {
+  const track = await findTrackById(db, trackId);
+
+  if (!track || !track.cover_url) {
+    return null;
+  }
+
+  return track.cover_url;
+}
+
+export async function fetchTrackCover(
+  coverUrl: string
+) {
+  return fetch(coverUrl, {
+    signal: AbortSignal.timeout(10000),
+  });
+}

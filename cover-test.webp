@@ -1,0 +1,7 @@
+HTTP/1.1 502 Bad Gateway
+Content-Length: 54
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+X-Request-Id: 00d03b28-7e36-4d8c-8cb8-6e60d8fdf051
+
+{"success":false,"message":"Cover source unavailable"}

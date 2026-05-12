@@ -5,7 +5,9 @@ import { notFound } from "../lib/http";
 import type { AppHonoEnv } from "../types/env";
 import {
   fetchTrackAudio,
+  fetchTrackCover,
   getTrackAudioUrl,
+  getTrackCoverUrl,
 } from "../services/media.service";
 
 export const mediaRoutes = new Hono<AppHonoEnv>();
@@ -107,4 +109,149 @@ mediaRoutes.on(
   "HEAD",
   "/media/tracks/:id/stream",
   streamTrackAudio
+);
+
+mediaRoutes.get("/media/tracks/:id/cover", async (c) => {
+  const env = getEnv(c.env);
+  const id = Number(c.req.param("id"));
+
+  if (Number.isNaN(id)) {
+    return c.json(notFound("Track not found"), 404);
+  }
+
+  const coverUrl = await getTrackCoverUrl(
+    env.DB,
+    id
+  );
+
+  if (!coverUrl) {
+    return c.json(
+      notFound("Cover not found"),
+      404
+    );
+  }
+
+  let coverResponse: Response;
+
+  try {
+    coverResponse = await fetchTrackCover(
+      coverUrl
+    );
+  } catch {
+    return c.json(
+      {
+        success: false,
+        message: "Cover source unavailable",
+      },
+      502
+    );
+  }
+
+  if (!coverResponse.ok) {
+    return c.json(
+      {
+        success: false,
+        message: "Cover source unavailable",
+      },
+      502
+    );
+  }
+
+  const headers = new Headers();
+
+  headers.set(
+    "Content-Type",
+    coverResponse.headers.get("Content-Type") ??
+      "image/jpeg"
+  );
+
+  headers.set(
+    "Cache-Control",
+    "public, max-age=3600"
+  );
+
+  return new Response(coverResponse.body, {
+    status: 200,
+    headers,
+  });
+});
+async function streamTrackCover(c: any) {
+  const env = getEnv(c.env);
+  const id = Number(c.req.param("id"));
+
+  if (Number.isNaN(id)) {
+    return c.json(notFound("Track not found"), 404);
+  }
+
+  const coverUrl = await getTrackCoverUrl(env.DB, id);
+
+  if (!coverUrl) {
+    return c.json(notFound("Cover not found"), 404);
+  }
+
+  let coverResponse: Response;
+
+  try {
+    coverResponse = await fetchTrackCover(coverUrl);
+  } catch (error) {
+    console.error(
+      "COVER_FETCH_ERROR",
+      error instanceof Error ? error.message : error
+    );
+
+    return c.json(
+      {
+        success: false,
+        message: "Cover source unavailable",
+      },
+      502
+    );
+  }
+
+  if (!coverResponse.ok) {
+    return c.json(
+      {
+        success: false,
+        message: "Cover source unavailable",
+      },
+      502
+    );
+  }
+
+  const headers = new Headers();
+
+  headers.set(
+    "Content-Type",
+    coverResponse.headers.get("Content-Type") ??
+      "image/jpeg"
+  );
+
+  const contentLength =
+    coverResponse.headers.get("Content-Length");
+
+  if (contentLength) {
+    headers.set("Content-Length", contentLength);
+  }
+
+  headers.set("Cache-Control", "public, max-age=3600");
+
+  if (c.req.method === "HEAD") {
+    return new Response(null, {
+      status: 200,
+      headers,
+    });
+  }
+
+  return new Response(coverResponse.body, {
+    status: 200,
+    headers,
+  });
+}
+
+mediaRoutes.get("/media/tracks/:id/cover", streamTrackCover);
+
+mediaRoutes.on(
+  "HEAD",
+  "/media/tracks/:id/cover",
+  streamTrackCover
 );
