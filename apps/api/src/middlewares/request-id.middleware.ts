@@ -1,7 +1,8 @@
 import type { Context, Next } from "hono";
+import type { AppHonoEnv } from "../types/env";
 
 export async function requestId(
-  c: Context,
+  c: Context<AppHonoEnv>,
   next: Next
 ) {
   const id = crypto.randomUUID();

@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { getEnv } from "../lib/env";
-import type { AppBindings } from "./types/env";
+import type {  AppHonoEnv } from "../types/env";
 
 import type {
   LoginInput,
@@ -18,9 +18,7 @@ import type { RegisterResponse } from "@music-app/shared";
 
 
 
-export const authRoutes = new Hono<{
-  Bindings: AppBindings;
-}>();
+export const authRoutes = new Hono<AppHonoEnv>();
 
 authRoutes.post("/auth/register", async (c) => {
   try {

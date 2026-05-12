@@ -1,4 +1,5 @@
 /// <reference types="@cloudflare/workers-types" />
+import type { AppHonoEnv } from "./types/env";
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
@@ -12,7 +13,7 @@ import { requestLogger } from "./middlewares/logger.middleware";
 import { errorHandler } from "./middlewares/error.middleware";
 
 
-const app = new Hono();
+const app = new Hono<AppHonoEnv>();
 
 app.use("*", cors());
 app.use("*", requestId);

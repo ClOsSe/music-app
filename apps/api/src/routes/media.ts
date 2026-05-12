@@ -3,12 +3,10 @@ import { Hono } from "hono";
 import { getTrackAudioUrl } from "../services/media.service";
 import { badRequest } from "../lib/http";
 import { getEnv } from "../lib/env";
-import type { AppBindings } from "./types/env";
+import type {  AppHonoEnv } from "../types/env";
 
 
-export const mediaRoutes = new Hono<{
-  Bindings: AppBindings;
-}>();
+export const mediaRoutes = new Hono<AppHonoEnv>();
 
 mediaRoutes.get("/media/health", (c) => {
   return c.json({

@@ -19,12 +19,10 @@ import { badRequest, created,notFound } from "../lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
 import { requireAdmin } from "../middlewares/admin.middleware";
 import { getEnv } from "../lib/env";
-import { AppBindings } from "./types/env";
+import { AppHonoEnv } from "../types/env";
 
 
-export const tracksRoutes = new Hono<{
-  Bindings: AppBindings ;
-}>();
+export const tracksRoutes =new Hono<AppHonoEnv>();
 
 tracksRoutes.get("/tracks", async (c) => {
   const env = getEnv(c.env);

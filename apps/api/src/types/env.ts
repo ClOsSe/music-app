@@ -6,3 +6,8 @@ export type AppBindings = {
 export type AppVariables = {
   requestId: string;
 };
+
+export type AppHonoEnv = {
+  Bindings: AppBindings;
+  Variables: AppVariables;
+};

@@ -1,7 +1,8 @@
 import type { Context, Next } from "hono";
+import type { AppHonoEnv } from "../types/env";
 
 export async function requestLogger(
-  c: Context,
+  c: Context<AppHonoEnv>,
   next: Next
 ) {
   const start = Date.now();
