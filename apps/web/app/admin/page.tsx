@@ -1,6 +1,8 @@
 import { AddTrackForm } from "./add-track-form";
 import { AdminAuthGuard } from "./admin-auth-guard";
 import { LogoutButton } from "./logout-button";
+import { AdminUser } from "./admin-user";
+
 export default async function AdminPage() {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
@@ -15,6 +17,7 @@ export default async function AdminPage() {
       <main className="min-h-screen p-8">
         <AdminAuthGuard />
         <LogoutButton />
+        <AdminUser />
         <h1 className="text-3xl font-bold">Admin Panel</h1>
 
         <section className="mt-8">

@@ -1,3 +1,13 @@
+import { jwtDecode } from "jwt-decode";
+
+type AuthTokenPayload = {
+  sub: number;
+  email: string;
+  role: "admin";
+  exp: number;
+};
+
+
 export function getAuthToken() {
   if (typeof window === "undefined") {
     return null;
@@ -16,4 +26,18 @@ export function logout() {
   }
 
   localStorage.removeItem("token");
+}
+
+export function getCurrentUser() {
+  const token = getAuthToken();
+
+  if (!token) {
+    return null;
+  }
+
+  try {
+    return jwtDecode<AuthTokenPayload>(token);
+  } catch {
+    return null;
+  }
 }
