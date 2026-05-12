@@ -33,3 +33,27 @@ export type LoginInput = {
   email: string;
   password: string;
 };
+
+export type ApiSuccess<T> = {
+  success: true;
+  data: T;
+};
+
+export type ApiError = {
+  success: false;
+  message: string;
+};
+export type AuthUser = {
+  id: number;
+  email: string;
+  role: "admin";
+};
+
+export type LoginResponse = {
+  token: string;
+  user: AuthUser;
+};
+
+export type RegisterResponse = {
+  id: number;
+};
