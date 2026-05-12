@@ -1,42 +1,43 @@
 import { Hono } from "hono";
-import { getEnv } from "../lib/env";
-import type {  AppHonoEnv } from "../types/env";
-
 import type {
-  LoginInput,
-  RegisterInput,
+  LoginResponse,
+  RegisterResponse,
 } from "@music-app/shared";
 
-
+import { getEnv } from "../lib/env";
+import type { AppHonoEnv } from "../types/env";
 import {
   loginUser,
   registerUser,
 } from "../services/auth.service";
 import { badRequest, created } from "../lib/http";
-
-import type { RegisterResponse } from "@music-app/shared";
-
-
+import {
+  loginSchema,
+  registerSchema,
+} from "../validators/auth.schema";
 
 export const authRoutes = new Hono<AppHonoEnv>();
 
 authRoutes.post("/auth/register", async (c) => {
   try {
     const env = getEnv(c.env);
+    const body = await c.req.json();
 
-    const body = await c.req.json<RegisterInput>();
+    const parsed = registerSchema.safeParse(body);
 
-    if (!body.email || !body.password) {
+    if (!parsed.success) {
       return c.json(
-        badRequest("Email and password are required"),
+        badRequest(
+          parsed.error.issues[0]?.message ?? "Invalid input"
+        ),
         400
       );
     }
 
     const result = await registerUser(
       env.DB,
-      body.email,
-      body.password
+      parsed.data.email,
+      parsed.data.password
     );
 
     return c.json(
@@ -60,12 +61,15 @@ authRoutes.post("/auth/register", async (c) => {
 authRoutes.post("/auth/login", async (c) => {
   try {
     const env = getEnv(c.env);
+    const body = await c.req.json();
 
-    const body = await c.req.json<LoginInput>();
+    const parsed = loginSchema.safeParse(body);
 
-    if (!body.email || !body.password) {
+    if (!parsed.success) {
       return c.json(
-        badRequest("Email and password are required"),
+        badRequest(
+          parsed.error.issues[0]?.message ?? "Invalid input"
+        ),
         400
       );
     }
@@ -73,20 +77,18 @@ authRoutes.post("/auth/login", async (c) => {
     const user = await loginUser(
       env.DB,
       env.JWT_SECRET,
-      body.email,
-      body.password
+      parsed.data.email,
+      parsed.data.password
     );
 
     return c.json(
-      created(user),
+      created<LoginResponse>(user),
       200
     );
   } catch (error) {
     return c.json(
       badRequest(
-        error instanceof Error
-          ? error.message
-          : "Login failed"
+        error instanceof Error ? error.message : "Login failed"
       ),
       400
     );
