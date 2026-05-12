@@ -8,6 +8,8 @@ import { EditTrackButton } from "./edit-track-button";
 import { TracksSearchForm } from "./tracks-search-form";
 import { TracksPagination } from "./tracks-pagination";
 import { AudioPreview } from "./audio-preview";
+import { AdminPlayer } from "./admin-player";
+
 type Props = {
   searchParams: Promise<{
     search?: string;
@@ -85,6 +87,7 @@ export default async function AdminPage({ searchParams }: Props) {
           totalPages={data.total_pages}
           search={search}
         />
+        <AdminPlayer tracks={data.items} />
       </section>
     </main>
   );

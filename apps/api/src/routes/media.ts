@@ -18,6 +18,24 @@ mediaRoutes.get("/media/health", (c) => {
   });
 });
 
+const svg = `
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+  <rect width="100%" height="100%" fill="#111827"/>
+  <text
+    x="50%"
+    y="50%"
+    dominant-baseline="middle"
+    text-anchor="middle"
+    fill="white"
+    font-size="32"
+    font-family="Arial"
+  >
+    No Cover
+  </text>
+</svg>
+`;
+
+
 async function streamTrackAudio(c: any) {
   const env = getEnv(c.env);
   const id = Number(c.req.param("id"));
@@ -111,70 +129,6 @@ mediaRoutes.on(
   streamTrackAudio
 );
 
-mediaRoutes.get("/media/tracks/:id/cover", async (c) => {
-  const env = getEnv(c.env);
-  const id = Number(c.req.param("id"));
-
-  if (Number.isNaN(id)) {
-    return c.json(notFound("Track not found"), 404);
-  }
-
-  const coverUrl = await getTrackCoverUrl(
-    env.DB,
-    id
-  );
-
-  if (!coverUrl) {
-    return c.json(
-      notFound("Cover not found"),
-      404
-    );
-  }
-
-  let coverResponse: Response;
-
-  try {
-    coverResponse = await fetchTrackCover(
-      coverUrl
-    );
-  } catch {
-    return c.json(
-      {
-        success: false,
-        message: "Cover source unavailable",
-      },
-      502
-    );
-  }
-
-  if (!coverResponse.ok) {
-    return c.json(
-      {
-        success: false,
-        message: "Cover source unavailable",
-      },
-      502
-    );
-  }
-
-  const headers = new Headers();
-
-  headers.set(
-    "Content-Type",
-    coverResponse.headers.get("Content-Type") ??
-      "image/jpeg"
-  );
-
-  headers.set(
-    "Cache-Control",
-    "public, max-age=3600"
-  );
-
-  return new Response(coverResponse.body, {
-    status: 200,
-    headers,
-  });
-});
 async function streamTrackCover(c: any) {
   const env = getEnv(c.env);
   const id = Number(c.req.param("id"));
@@ -193,19 +147,19 @@ async function streamTrackCover(c: any) {
 
   try {
     coverResponse = await fetchTrackCover(coverUrl);
-  } catch (error) {
-    console.error(
-      "COVER_FETCH_ERROR",
-      error instanceof Error ? error.message : error
-    );
+      } catch (error) {
+        console.error(
+        "COVER_FETCH_ERROR",
+        error instanceof Error ? error.message : error
+      );
 
-    return c.json(
-      {
-        success: false,
-        message: "Cover source unavailable",
-      },
-      502
-    );
+      return new Response(svg, {
+        status: 200,
+        headers: {
+          "Content-Type": "image/svg+xml",
+          "Cache-Control": "public, max-age=3600",
+        },
+      });
   }
 
   if (!coverResponse.ok) {
