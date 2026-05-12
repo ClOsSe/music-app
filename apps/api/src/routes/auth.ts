@@ -11,6 +11,8 @@ import {
 } from "../services/auth.service";
 import { badRequest, created } from "./lib/http";
 
+import type { RegisterResponse } from "@music-app/shared";
+
 type Bindings = {
   DB: D1Database;
   JWT_SECRET: string;
@@ -36,8 +38,8 @@ authRoutes.post("/auth/register", async (c) => {
     );
 
     return c.json(
-      created({
-        id: result.meta.last_row_id,
+      created<RegisterResponse>({
+        id: result.meta.last_row_id as number,
       }),
       201
     );

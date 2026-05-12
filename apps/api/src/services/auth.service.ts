@@ -5,7 +5,7 @@ import {
   findAuthUserByEmail,
   findUserByEmail,
 } from "../repositories/users.repository";
-
+import type { LoginResponse } from "@music-app/shared";
 export async function registerUser(
   db: D1Database,
   email: string,
@@ -27,7 +27,7 @@ export async function loginUser(
   jwtSecret: string,
   email: string,
   password: string
-) {
+): Promise<LoginResponse> {
   const user = await findAuthUserByEmail(
     db,
     email
@@ -61,7 +61,7 @@ export async function loginUser(
     user: {
       id: user.id,
       email: user.email,
-      role: user.role,
+      role: user.role as "admin",
     },
   };
 }
