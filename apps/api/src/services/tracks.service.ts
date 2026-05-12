@@ -5,8 +5,15 @@ import { deleteTrackById,findTracks, insertTrack ,updateTrackById ,
   findTracksPaginated,
 } from "../repositories/tracks.repository";
 
+import { getTrackStreamUrl } from "./media.service";
+
 export async function getTracks(db: D1Database) {
-  return findTracks(db);
+  const tracks = await findTracks(db);
+
+  return tracks.map((track) => ({
+    ...track,
+    audio_url: getTrackStreamUrl(track.audio_url),
+  }));
 }
 
 export async function createTrack(
@@ -30,11 +37,21 @@ export async function updateTrack(
 ) {
   return updateTrackById(db, id, input);
 }
+
 export async function getTrackById(
   db: D1Database,
   id: number
 ) {
-  return findTrackById(db, id);
+  const track = await findTrackById(db, id);
+
+  if (!track) {
+    return null;
+  }
+
+  return {
+    ...track,
+    audio_url: getTrackStreamUrl(track.audio_url),
+  };
 }
 
 export async function getTracksPaginated(
@@ -53,7 +70,10 @@ export async function getTracksPaginated(
   ]);
 
   return {
-    items,
+    items: items.map((track) => ({
+      ...track,
+      audio_url: getTrackStreamUrl(track.audio_url),
+    })),
     page: safePage,
     limit: safeLimit,
     total,
