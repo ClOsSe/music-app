@@ -7,10 +7,11 @@ import { healthRoutes } from "./routes/health";
 import { tracksRoutes } from "./routes/tracks";
 import { authRoutes } from "./routes/auth";
 import { mediaRoutes } from "./routes/media";
-
+import { requestLogger } from "./middlewares/logger.middleware";
 const app = new Hono();
 
 app.use("*", cors());
+app.use("*", requestLogger);
 
 app.get("/", (c) => {
   return c.json({
