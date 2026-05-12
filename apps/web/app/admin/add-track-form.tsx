@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { API_URL, authHeaders } from "../lib/api";
 
 export function AddTrackForm() {
   const [title, setTitle] = useState("");
@@ -11,17 +12,16 @@ export function AddTrackForm() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const token = localStorage.getItem("token");
     if (!token) {
       alert("Please login first");
       return;
     }
-    const res = await fetch(`${apiUrl}/tracks`, {
+    const res = await fetch(`${API_URL}/tracks`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+        ...authHeaders(),
       },
       body: JSON.stringify({
         title,

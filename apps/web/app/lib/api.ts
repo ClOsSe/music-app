@@ -8,7 +8,7 @@ export function getToken() {
   return localStorage.getItem("token");
 }
 
-export function authHeaders() {
+export function authHeaders(): HeadersInit {
   const token = getToken();
 
   if (!token) {
