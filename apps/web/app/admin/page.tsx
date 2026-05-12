@@ -7,7 +7,7 @@ import { DeleteTrackButton } from "./delete-track-button";
 import { EditTrackButton } from "./edit-track-button";
 import { TracksSearchForm } from "./tracks-search-form";
 import { TracksPagination } from "./tracks-pagination";
-
+import { AudioPreview } from "./audio-preview";
 type Props = {
   searchParams: Promise<{
     search?: string;
@@ -68,6 +68,7 @@ export default async function AdminPage({ searchParams }: Props) {
                 <div>
                   <p className="font-medium">{track.title}</p>
                   <p className="text-sm text-gray-500">{track.artist}</p>
+                  <AudioPreview trackId={track.id} />
                 </div>
 
                 <div className="flex gap-2">
