@@ -9,9 +9,11 @@ export async function requestLogger(
   await next();
 
   const duration = Date.now() - start;
+  const requestId = c.get("requestId");
 
   console.log(
     [
+      requestId,
       c.req.method,
       c.req.path,
       c.res.status,
