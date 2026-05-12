@@ -1,11 +1,13 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { deleteTrack } from "../lib/tracks-api";
 type Props = {
   id: number;
 };
 
 export function DeleteTrackButton({ id }: Props) {
+  const router = useRouter();
   async function onDelete() {
     const confirmed = confirm("Delete this track?");
 
@@ -16,7 +18,7 @@ export function DeleteTrackButton({ id }: Props) {
     try {
       await deleteTrack(id);
 
-      window.location.reload();
+      router.refresh();
     } catch {
       alert("Delete failed");
     }

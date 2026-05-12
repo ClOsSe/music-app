@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { createTrack } from "../lib/tracks-api";
+import { useRouter } from "next/navigation";
 export function AddTrackForm() {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [audioUrl, setAudioUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
+  const router = useRouter();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,7 +25,7 @@ export function AddTrackForm() {
       cover_url: coverUrl || null,
     });
 
-    window.location.reload();
+    router.refresh();
 
     setTitle("");
     setArtist("");

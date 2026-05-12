@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Track } from "@music-app/shared";
 import { updateTrack } from "../lib/tracks-api";
+import { useRouter } from "next/navigation";
 type Props = {
   track: Track;
 };
@@ -13,6 +14,7 @@ export function EditTrackButton({ track }: Props) {
   const [artist, setArtist] = useState(track.artist);
   const [audioUrl, setAudioUrl] = useState(track.audio_url);
   const [coverUrl, setCoverUrl] = useState(track.cover_url ?? "");
+  const router = useRouter();
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +27,7 @@ export function EditTrackButton({ track }: Props) {
         cover_url: coverUrl || null,
       });
 
-      window.location.reload();
+      router.refresh();
     } catch {
       alert("Update failed");
     }
