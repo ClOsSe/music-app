@@ -17,7 +17,7 @@ export function getAuthToken() {
 }
 
 export function isAuthenticated() {
-  return Boolean(getAuthToken());
+  return !isTokenExpired();
 }
 
 export function logout() {
@@ -40,4 +40,13 @@ export function getCurrentUser() {
   } catch {
     return null;
   }
+}
+export function isTokenExpired() {
+  const user = getCurrentUser();
+
+  if (!user) {
+    return true;
+  }
+
+  return user.exp * 1000 < Date.now();
 }

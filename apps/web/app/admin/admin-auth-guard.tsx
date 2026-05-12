@@ -3,13 +3,14 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
+import { isAuthenticated, logout } from "../lib/auth";
+
 export function AdminAuthGuard() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token) {
+    if (!isAuthenticated()) {
+      logout();
       router.push("/login");
     }
   }, [router]);
