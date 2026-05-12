@@ -1,29 +1,33 @@
 import { Hono } from "hono";
-import type { CreateTrackInput,
+import type {
+  CreateTrackInput,
   CreateTrackResponse,
   DeleteTrackResponse,
-  UpdateTrackResponse, } from "@music-app/shared";
-import { createTrack,
+  UpdateTrackResponse,
+} from "@music-app/shared";
+
+import {
+  createTrack,
   deleteTrack,
   getTrackById,
   getTracks,
   getTracksPaginated,
   updateTrack,
- } from "../services/tracks.service";
+} from "../services/tracks.service";
 import { validateCreateTrackInput } from "../validators/tracks.validator";
 import { badRequest, created } from "./lib/http";
 import { requireAuth } from "../middlewares/auth.middleware";
-import { getCurrentUser } from "./lib/auth";
 import { requireAdmin } from "../middlewares/admin.middleware";
+import { getEnv } from "../lib/env";
+import { AppBindings } from "./types/env";
 
-type Bindings = {
-  DB: D1Database;
-  JWT_SECRET: string;
-};
-
-export const tracksRoutes = new Hono<{ Bindings: Bindings }>();
+export const tracksRoutes = new Hono<{
+  Bindings: AppBindings ;
+}>();
 
 tracksRoutes.get("/tracks", async (c) => {
+  const env = getEnv(c.env);
+
   const search = c.req.query("search");
   const page = Number(c.req.query("page") ?? 1);
   const limit = Number(c.req.query("limit") ?? 10);
@@ -34,7 +38,7 @@ tracksRoutes.get("/tracks", async (c) => {
     search
   ) {
     const result = await getTracksPaginated(
-      c.env.DB,
+      env.DB,
       search,
       Number.isNaN(page) ? 1 : page,
       Number.isNaN(limit) ? 10 : limit
@@ -43,18 +47,20 @@ tracksRoutes.get("/tracks", async (c) => {
     return c.json(result);
   }
 
-  const tracks = await getTracks(c.env.DB);
+  const tracks = await getTracks(env.DB);
 
   return c.json(tracks);
 });
+
 tracksRoutes.get("/tracks/:id", async (c) => {
+  const env = getEnv(c.env);
   const id = Number(c.req.param("id"));
 
   if (Number.isNaN(id)) {
     return c.json(badRequest("Invalid track id"), 400);
   }
 
-  const track = await getTrackById(c.env.DB, id);
+  const track = await getTrackById(env.DB, id);
 
   if (!track) {
     return c.json(badRequest("Track not found"), 404);
@@ -63,20 +69,18 @@ tracksRoutes.get("/tracks/:id", async (c) => {
   return c.json(track);
 });
 
-
 tracksRoutes.post(
   "/tracks",
   async (c, next) => {
-    const middleware = requireAuth(c.env.JWT_SECRET);
+    const env = getEnv(c.env);
+    const middleware = requireAuth(env.JWT_SECRET);
 
     return middleware(c, next);
   },
   requireAdmin,
   async (c) => {
-    const user = getCurrentUser(c);
-    console.log(user);
+    const env = getEnv(c.env);
     const body = await c.req.json<CreateTrackInput>();
-    
 
     const error = validateCreateTrackInput(body);
 
@@ -84,7 +88,7 @@ tracksRoutes.post(
       return c.json(badRequest(error), 400);
     }
 
-    const result = await createTrack(c.env.DB, body);
+    const result = await createTrack(env.DB, body);
 
     return c.json(
       created<CreateTrackResponse>({
@@ -98,18 +102,21 @@ tracksRoutes.post(
 tracksRoutes.delete(
   "/tracks/:id",
   async (c, next) => {
-    const middleware = requireAuth(c.env.JWT_SECRET);
+    const env = getEnv(c.env);
+    const middleware = requireAuth(env.JWT_SECRET);
+
     return middleware(c, next);
   },
   requireAdmin,
   async (c) => {
+    const env = getEnv(c.env);
     const id = Number(c.req.param("id"));
 
     if (Number.isNaN(id)) {
       return c.json(badRequest("Invalid track id"), 400);
     }
 
-    await deleteTrack(c.env.DB, id);
+    await deleteTrack(env.DB, id);
 
     return c.json({
       success: true,
@@ -123,11 +130,14 @@ tracksRoutes.delete(
 tracksRoutes.put(
   "/tracks/:id",
   async (c, next) => {
-    const middleware = requireAuth(c.env.JWT_SECRET);
+    const env = getEnv(c.env);
+    const middleware = requireAuth(env.JWT_SECRET);
+
     return middleware(c, next);
   },
   requireAdmin,
   async (c) => {
+    const env = getEnv(c.env);
     const id = Number(c.req.param("id"));
 
     if (Number.isNaN(id)) {
@@ -142,7 +152,7 @@ tracksRoutes.put(
       return c.json(badRequest(error), 400);
     }
 
-    await updateTrack(c.env.DB, id, body);
+    await updateTrack(env.DB, id, body);
 
     return c.json({
       success: true,

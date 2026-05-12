@@ -1,4 +1,7 @@
 import { Hono } from "hono";
+import { getEnv } from "../lib/env";
+import type { AppBindings } from "./types/env";
+
 import type {
   LoginInput,
   RegisterInput,
@@ -13,15 +16,16 @@ import { badRequest, created } from "./lib/http";
 
 import type { RegisterResponse } from "@music-app/shared";
 
-type Bindings = {
-  DB: D1Database;
-  JWT_SECRET: string;
-};
 
-export const authRoutes = new Hono<{ Bindings: Bindings }>();
+
+export const authRoutes = new Hono<{
+  Bindings: AppBindings;
+}>();
 
 authRoutes.post("/auth/register", async (c) => {
   try {
+    const env = getEnv(c.env);
+
     const body = await c.req.json<RegisterInput>();
 
     if (!body.email || !body.password) {
@@ -32,7 +36,7 @@ authRoutes.post("/auth/register", async (c) => {
     }
 
     const result = await registerUser(
-      c.env.DB,
+      env.DB,
       body.email,
       body.password
     );
@@ -57,6 +61,8 @@ authRoutes.post("/auth/register", async (c) => {
 
 authRoutes.post("/auth/login", async (c) => {
   try {
+    const env = getEnv(c.env);
+
     const body = await c.req.json<LoginInput>();
 
     if (!body.email || !body.password) {
@@ -67,8 +73,8 @@ authRoutes.post("/auth/login", async (c) => {
     }
 
     const user = await loginUser(
-      c.env.DB,
-      c.env.JWT_SECRET,
+      env.DB,
+      env.JWT_SECRET,
       body.email,
       body.password
     );
