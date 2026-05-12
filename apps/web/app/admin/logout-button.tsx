@@ -1,12 +1,12 @@
 "use client";
-
+import { logout as AuthLogout } from "../lib/auth";
 import { useRouter } from "next/navigation";
 
 export function LogoutButton() {
   const router = useRouter();
 
   function logout() {
-    localStorage.removeItem("token");
+    AuthLogout();
     router.push("/login");
   }
 

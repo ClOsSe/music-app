@@ -1,3 +1,4 @@
+import { getAuthToken } from "./auth";
 export const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 export function getToken() {
@@ -9,7 +10,7 @@ export function getToken() {
 }
 
 export function authHeaders(): HeadersInit {
-  const token = getToken();
+  const token = getAuthToken();
 
   if (!token) {
     return {};
