@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import type { Track } from "@music-app/shared";
-import { apiFetch } from "../lib/fetcher";
-
+import { updateTrack } from "../lib/tracks-api";
 type Props = {
   track: Track;
 };
@@ -19,14 +18,11 @@ export function EditTrackButton({ track }: Props) {
     e.preventDefault();
 
     try {
-      await apiFetch(`/tracks/${track.id}`, {
-        method: "PUT",
-        body: JSON.stringify({
-          title,
-          artist,
-          audio_url: audioUrl,
-          cover_url: coverUrl || null,
-        }),
+      await updateTrack(track.id, {
+        title,
+        artist,
+        audio_url: audioUrl,
+        cover_url: coverUrl || null,
       });
 
       window.location.reload();

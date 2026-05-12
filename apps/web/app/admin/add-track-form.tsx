@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { API_URL, authHeaders } from "../lib/api";
-
+import { createTrack } from "../lib/tracks-api";
 export function AddTrackForm() {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
@@ -17,28 +16,13 @@ export function AddTrackForm() {
       alert("Please login first");
       return;
     }
-    const res = await fetch(`${API_URL}/tracks`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...authHeaders(),
-      },
-      body: JSON.stringify({
-        title,
-        artist,
-        audio_url: audioUrl,
-        cover_url: coverUrl,
-      }),
+    await createTrack({
+      title,
+      artist,
+      audio_url: audioUrl,
+      cover_url: coverUrl || null,
     });
-    const text = await res.text();
-    const data = text ? JSON.parse(text) : null;
 
-    if (!res.ok) {
-      alert(data?.message ?? text ?? "Create track failed");
-      return;
-    }
-
-    alert("Track created");
     window.location.reload();
 
     setTitle("");

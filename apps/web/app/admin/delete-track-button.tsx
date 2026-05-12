@@ -1,7 +1,6 @@
 "use client";
 
-import { apiFetch } from "../lib/fetcher";
-
+import { deleteTrack } from "../lib/tracks-api";
 type Props = {
   id: number;
 };
@@ -15,9 +14,7 @@ export function DeleteTrackButton({ id }: Props) {
     }
 
     try {
-      await apiFetch(`/tracks/${id}`, {
-        method: "DELETE",
-      });
+      await deleteTrack(id);
 
       window.location.reload();
     } catch {
