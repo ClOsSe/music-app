@@ -1,5 +1,13 @@
 # Music App
+---
 
+https://music-app-web.webinaexpert.workers.dev
+
+API:
+
+https://api.webinaexpert.workers.dev
+
+---
 Educational Spotify Clone built with a Cloudflare-first architecture.
 
 ## Stack
@@ -121,4 +129,3 @@ Public users do not need login.
 Admin is only for content management.
 Tracks are public.
 R2 upload is postponed until billing/payment is enabled.
-Avoid overengineering for now.
