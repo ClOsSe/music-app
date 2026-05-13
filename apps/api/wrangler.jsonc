@@ -3,9 +3,6 @@
   "name": "api",
   "main": "src/index.ts",
   "compatibility_date": "2026-05-12",
-  "vars": {
-    "JWT_SECRET": "dev-secret-change-later",
-  },
   "d1_databases": [
     {
       "binding": "DB",
