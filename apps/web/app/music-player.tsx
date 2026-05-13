@@ -4,12 +4,13 @@ import { useState } from "react";
 import type { Track } from "@music-app/shared";
 
 import { API_URL } from "./lib/api";
-
+const GENRES = ["All", "Pop", "Traditional", "Rap", "Rock"];
 type Props = {
   tracks: Track[];
+  activeGenre: string;
 };
 
-export function MusicPlayer({ tracks }: Props) {
+export function MusicPlayer({ tracks, activeGenre }: Props) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
 
   return (
@@ -19,6 +20,28 @@ export function MusicPlayer({ tracks }: Props) {
           <h1 className="text-3xl font-bold">Music App</h1>
           <p className="mt-2 text-sm text-zinc-400">Listen to public tracks</p>
         </header>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {GENRES.map((genre) => {
+            const href =
+              genre === "All" ? "/" : `/?genre=${encodeURIComponent(genre)}`;
+
+            const isActive = activeGenre === genre;
+
+            return (
+              <a
+                key={genre}
+                href={href}
+                className={
+                  isActive
+                    ? "rounded-full bg-white px-4 py-2 text-sm font-medium text-black"
+                    : "rounded-full border border-zinc-700 px-4 py-2 text-sm text-zinc-300"
+                }
+              >
+                {genre}
+              </a>
+            );
+          })}
+        </div>
 
         {tracks.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-400">

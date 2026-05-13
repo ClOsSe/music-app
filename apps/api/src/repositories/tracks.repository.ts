@@ -89,10 +89,55 @@ export async function findTrackById(
 export async function findTracksPaginated(
   db: D1Database,
   search: string | undefined,
+  genre: string | undefined,
   limit: number,
   offset: number
 ) {
-  if (search) {
+  const hasSearch = Boolean(search);
+  const hasGenre = Boolean(genre && genre !== "All");
+
+  if (hasSearch && hasGenre) {
+    const q = `%${search}%`;
+
+    const { results } = await db
+      .prepare(
+        `
+        SELECT *
+        FROM tracks
+        WHERE genre = ?
+          AND (
+            title LIKE ?
+            OR artist LIKE ?
+            OR genre LIKE ?
+          )
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?
+        `
+      )
+      .bind(genre, q, q, q, limit, offset)
+      .all<Track>();
+
+    return results;
+  }
+
+  if (hasGenre) {
+    const { results } = await db
+      .prepare(
+        `
+        SELECT *
+        FROM tracks
+        WHERE genre = ?
+        ORDER BY created_at DESC
+        LIMIT ? OFFSET ?
+        `
+      )
+      .bind(genre, limit, offset)
+      .all<Track>();
+
+    return results;
+  }
+
+  if (hasSearch) {
     const q = `%${search}%`;
 
     const { results } = await db
@@ -130,9 +175,50 @@ export async function findTracksPaginated(
 
 export async function countTracks(
   db: D1Database,
-  search?: string
+  search?: string,
+  genre?: string
 ) {
-  if (search) {
+  const hasSearch = Boolean(search);
+  const hasGenre = Boolean(genre && genre !== "All");
+
+  if (hasSearch && hasGenre) {
+    const q = `%${search}%`;
+
+    const row = await db
+      .prepare(
+        `
+        SELECT COUNT(*) as total
+        FROM tracks
+        WHERE genre = ?
+          AND (
+            title LIKE ?
+            OR artist LIKE ?
+            OR genre LIKE ?
+          )
+        `
+      )
+      .bind(genre, q, q, q)
+      .first<{ total: number }>();
+
+    return row?.total ?? 0;
+  }
+
+  if (hasGenre) {
+    const row = await db
+      .prepare(
+        `
+        SELECT COUNT(*) as total
+        FROM tracks
+        WHERE genre = ?
+        `
+      )
+      .bind(genre)
+      .first<{ total: number }>();
+
+    return row?.total ?? 0;
+  }
+
+  if (hasSearch) {
     const q = `%${search}%`;
 
     const row = await db

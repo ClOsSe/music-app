@@ -70,6 +70,7 @@ export type DeleteTrackResponse = TrackMutationResponse;
 
 export type TracksQuery = {
   search?: string;
+  genre?: string;
   page?: number;
   limit?: number;
 };

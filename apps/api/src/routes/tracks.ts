@@ -33,17 +33,19 @@ tracksRoutes.get("/tracks", async (c) => {
   const env = getEnv(c.env);
 
   const search = c.req.query("search");
+  const genre = c.req.query("genre");
   const page = Number(c.req.query("page") ?? 1);
   const limit = Number(c.req.query("limit") ?? 10);
 
   if (
     c.req.query("page") ||
     c.req.query("limit") ||
-    search
+    search || genre
   ) {
     const result = await getTracksPaginated(
       env.DB,
       search,
+      genre,
       Number.isNaN(page) ? 1 : page,
       Number.isNaN(limit) ? 10 : limit
     );

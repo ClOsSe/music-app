@@ -57,23 +57,27 @@ export async function getTrackById(
 export async function getTracksPaginated(
   db: D1Database,
   search: string | undefined,
+  genre: string | undefined,
   page: number,
   limit: number
-): Promise<PaginatedTracksResponse> {
+) {
   const safePage = Math.max(page, 1);
   const safeLimit = Math.min(Math.max(limit, 1), 50);
   const offset = (safePage - 1) * safeLimit;
 
   const [items, total] = await Promise.all([
-    findTracksPaginated(db, search, safeLimit, offset),
-    countTracks(db, search),
+    findTracksPaginated(
+      db,
+      search,
+      genre,
+      safeLimit,
+      offset
+    ),
+    countTracks(db, search, genre),
   ]);
 
   return {
-    items: items.map((track) => ({
-      ...track,
-      audio_url: getTrackStreamUrl(track.audio_url),
-    })),
+    items,
     page: safePage,
     limit: safeLimit,
     total,
