@@ -1,20 +1,24 @@
-export default async function Home() {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+import type { PaginatedTracksResponse } from "@music-app/shared";
 
-  const res = await fetch(`${apiUrl}/health`, {
+import { API_URL } from "./lib/api";
+import { MusicPlayer } from "./music-player";
+
+async function getPublicTracks() {
+  const res = await fetch(`${API_URL}/tracks?page=1&limit=20`, {
     cache: "no-store",
   });
 
-  const data = await res.json();
+  if (!res.ok) {
+    throw new Error("Failed to fetch tracks");
+  }
 
-  return (
-    <main className="min-h-screen p-8">
-      <h1 className="text-3xl font-bold">Music App</h1>
+  const response = (await res.json()) as PaginatedTracksResponse;
 
-      <div className="mt-6 rounded-lg border p-4">
-        <p>API Status:</p>
-        <pre className="mt-2">{JSON.stringify(data, null, 2)}</pre>
-      </div>
-    </main>
-  );
+  return response.items;
+}
+
+export default async function HomePage() {
+  const tracks = await getPublicTracks();
+
+  return <MusicPlayer tracks={tracks} />;
 }
