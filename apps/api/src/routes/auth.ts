@@ -10,23 +10,29 @@ import {
   loginUser,
   registerUser,
 } from "../services/auth.service";
-import { badRequest, created } from "../lib/http";
+import { badRequest, created, ok } from "../lib/http";
 import {
   loginSchema,
   registerSchema,
 } from "../validators/auth.schema";
 import { validateJson } from "../lib/validation";
+import { parseJsonBody } from "../lib/request";
 
 export const authRoutes = new Hono<AppHonoEnv>();
 
 authRoutes.post("/auth/register", async (c) => {
   try {
     const env = getEnv(c.env);
-    const body = await c.req.json();
+
+    const parsedBody = await parseJsonBody(c);
+
+    if (!parsedBody.success) {
+      return parsedBody.response;
+    }
 
     const parsed = validateJson(
       registerSchema,
-      body
+      parsedBody.data
     );
 
     if (!parsed.success) {
@@ -65,11 +71,16 @@ authRoutes.post("/auth/register", async (c) => {
 authRoutes.post("/auth/login", async (c) => {
   try {
     const env = getEnv(c.env);
-    const body = await c.req.json();
+
+    const parsedBody = await parseJsonBody(c);
+
+    if (!parsedBody.success) {
+      return parsedBody.response;
+    }
 
     const parsed = validateJson(
       loginSchema,
-      body
+      parsedBody.data
     );
 
     if (!parsed.success) {
@@ -88,10 +99,7 @@ authRoutes.post("/auth/login", async (c) => {
       parsed.data.password
     );
 
-    return c.json(
-      created<LoginResponse>(user),
-      200
-    );
+    return c.json(ok<LoginResponse>(user));
   } catch (error) {
     return c.json(
       badRequest(
