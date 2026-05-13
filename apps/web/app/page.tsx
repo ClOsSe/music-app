@@ -1,4 +1,4 @@
-import type { PaginatedTracksResponse } from "@music-app/shared";
+import type { Genre, PaginatedTracksResponse } from "@music-app/shared";
 
 import { API_URL } from "./lib/api";
 import { MusicPlayer } from "./music-player";
@@ -9,7 +9,7 @@ type Props = {
   }>;
 };
 
-async function getPublicTracks(genre?: string) {
+async function getPublicData(genre?: string) {
   const searchParams = new URLSearchParams();
 
   searchParams.set("page", "1");
@@ -19,23 +19,40 @@ async function getPublicTracks(genre?: string) {
     searchParams.set("genre", genre);
   }
 
-  const res = await fetch(`${API_URL}/tracks?${searchParams.toString()}`, {
-    cache: "no-store",
-  });
+  const [tracksRes, genresRes] = await Promise.all([
+    fetch(`${API_URL}/tracks?${searchParams.toString()}`, {
+      cache: "no-store",
+    }),
+    fetch(`${API_URL}/genres`, {
+      cache: "no-store",
+    }),
+  ]);
 
-  if (!res.ok) {
+  if (!tracksRes.ok) {
     throw new Error("Failed to fetch tracks");
   }
 
-  const response = (await res.json()) as PaginatedTracksResponse;
+  if (!genresRes.ok) {
+    throw new Error("Failed to fetch genres");
+  }
 
-  return response.items;
+  const tracksData = (await tracksRes.json()) as PaginatedTracksResponse;
+
+  const genres = (await genresRes.json()) as Genre[];
+
+  return {
+    tracks: tracksData.items,
+    genres,
+  };
 }
 
 export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
-  const genre = params.genre ?? "All";
-  const tracks = await getPublicTracks(genre);
+  const activeGenre = params.genre ?? "All";
 
-  return <MusicPlayer tracks={tracks} activeGenre={genre} />;
+  const { tracks, genres } = await getPublicData(activeGenre);
+
+  return (
+    <MusicPlayer tracks={tracks} genres={genres} activeGenre={activeGenre} />
+  );
 }

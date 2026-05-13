@@ -7,11 +7,14 @@ import type { Track } from "@music-app/shared";
 
 import { updateTrack } from "../lib/tracks-api";
 
+import type { Genre } from "@music-app/shared";
+
 type Props = {
   track: Track;
+  genres: Genre[];
 };
 
-export function EditTrackButton({ track }: Props) {
+export function EditTrackButton({ track, genres }: Props) {
   const [open, setOpen] = useState(false);
 
   const [title, setTitle] = useState(track.title);
@@ -73,10 +76,11 @@ export function EditTrackButton({ track }: Props) {
         value={genre}
         onChange={(e) => setGenre(e.target.value)}
       >
-        <option value="Pop">Pop</option>
-        <option value="Traditional">Traditional</option>
-        <option value="Rap">Rap</option>
-        <option value="Rock">Rock</option>
+        {genres.map((item) => (
+          <option key={item.id} value={item.name}>
+            {item.name}
+          </option>
+        ))}
       </select>
 
       <input

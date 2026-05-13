@@ -11,6 +11,7 @@ import { mediaRoutes } from "./routes/media";
 import { requestId } from "./middlewares/request-id.middleware";
 import { requestLogger } from "./middlewares/logger.middleware";
 import { errorHandler } from "./middlewares/error.middleware";
+import { genresRoutes } from "./routes/genres";
 
 
 const app = new Hono<AppHonoEnv>();
@@ -31,6 +32,7 @@ app.route("/", healthRoutes);
 app.route("/", tracksRoutes);
 app.route("/", authRoutes);
 app.route("/", mediaRoutes);
+app.route("/", genresRoutes);
 
 app.onError(errorHandler);
 export default app;

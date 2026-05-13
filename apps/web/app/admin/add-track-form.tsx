@@ -2,10 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
 import { createTrack } from "../lib/tracks-api";
+import type { Genre } from "@music-app/shared";
 
-export function AddTrackForm() {
+type Props = {
+  genres: Genre[];
+};
+
+export function AddTrackForm({ genres }: Props) {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [genre, setGenre] = useState("Pop");
@@ -67,10 +71,11 @@ export function AddTrackForm() {
           value={genre}
           onChange={(e) => setGenre(e.target.value)}
         >
-          <option value="Pop">Pop</option>
-          <option value="Traditional">Traditional</option>
-          <option value="Rap">Rap</option>
-          <option value="Rock">Rock</option>
+          {genres.map((item) => (
+            <option key={item.id} value={item.name}>
+              {item.name}
+            </option>
+          ))}
         </select>
       </div>
 

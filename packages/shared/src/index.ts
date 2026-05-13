@@ -82,3 +82,17 @@ export type PaginatedTracksResponse = {
   total: number;
   total_pages: number;
 };
+
+export type Genre = {
+  id: number;
+  name: string;
+  created_at: string;
+};
+
+export type CreateGenreInput = {
+  name: string;
+};
+
+export type GenreMutationResponse = {
+  id: number;
+};

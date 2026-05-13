@@ -1,4 +1,4 @@
-import type { PaginatedTracksResponse } from "@music-app/shared";
+import type { Genre, PaginatedTracksResponse } from "@music-app/shared";
 
 import { AddTrackForm } from "./add-track-form";
 import { AdminAuthGuard } from "./admin-auth-guard";
@@ -8,6 +8,8 @@ import { EditTrackButton } from "./edit-track-button";
 import { TracksSearchForm } from "./tracks-search-form";
 import { TracksPagination } from "./tracks-pagination";
 import { AudioPreview } from "./audio-preview";
+import { AddGenreForm } from "./add-genre-form";
+import { DeleteGenreButton } from "./delete-genre-button";
 
 type Props = {
   searchParams: Promise<{
@@ -35,11 +37,18 @@ export default async function AdminPage({ searchParams }: Props) {
   query.set("page", String(Number.isNaN(page) ? 1 : page));
   query.set("limit", String(Number.isNaN(limit) ? 5 : limit));
 
-  const res = await fetch(`${apiUrl}/tracks?${query.toString()}`, {
-    cache: "no-store",
-  });
+  const [tracksRes, genresRes] = await Promise.all([
+    fetch(`${apiUrl}/tracks?${query.toString()}`, {
+      cache: "no-store",
+    }),
+    fetch(`${apiUrl}/genres`, {
+      cache: "no-store",
+    }),
+  ]);
 
-  const data = (await res.json()) as PaginatedTracksResponse;
+  const data = (await tracksRes.json()) as PaginatedTracksResponse;
+
+  const genres = (await genresRes.json()) as Genre[];
 
   return (
     <main className="min-h-screen p-8">
@@ -53,8 +62,26 @@ export default async function AdminPage({ searchParams }: Props) {
         <LogoutButton />
       </div>
 
+      <section className="rounded-lg border p-4">
+        <h2 className="text-xl font-semibold">Genres</h2>
+
+        <AddGenreForm />
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {genres.map((genre) => (
+            <div
+              key={genre.id}
+              className="flex items-center gap-2 rounded-full border px-3 py-2"
+            >
+              <span className="text-sm">{genre.name}</span>
+              <DeleteGenreButton id={genre.id} />
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section className="mt-8">
-        <AddTrackForm />
+        <AddTrackForm genres={genres} />
 
         <div className="mt-8">
           <TracksSearchForm defaultSearch={search} />
@@ -74,7 +101,7 @@ export default async function AdminPage({ searchParams }: Props) {
                 </div>
 
                 <div className="flex gap-2">
-                  <EditTrackButton track={track} />
+                  <EditTrackButton track={track} genres={genres} />
                   <DeleteTrackButton id={track.id} />
                 </div>
               </div>

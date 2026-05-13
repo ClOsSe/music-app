@@ -1,16 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import type { Track } from "@music-app/shared";
+import type { Genre, Track } from "@music-app/shared";
 
 import { API_URL } from "./lib/api";
-const GENRES = ["All", "Pop", "Traditional", "Rap", "Rock"];
+
 type Props = {
   tracks: Track[];
+  genres: Genre[];
   activeGenre: string;
 };
 
-export function MusicPlayer({ tracks, activeGenre }: Props) {
+export function MusicPlayer({ tracks, genres, activeGenre }: Props) {
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
 
   return (
@@ -21,7 +22,7 @@ export function MusicPlayer({ tracks, activeGenre }: Props) {
           <p className="mt-2 text-sm text-zinc-400">Listen to public tracks</p>
         </header>
         <div className="mt-4 flex flex-wrap gap-2">
-          {GENRES.map((genre) => {
+          {["All", ...genres.map((genre) => genre.name)].map((genre) => {
             const href =
               genre === "All" ? "/" : `/?genre=${encodeURIComponent(genre)}`;
 
