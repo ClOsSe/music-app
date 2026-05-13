@@ -33,9 +33,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build API
-        run: pnpm --filter api build
-
       - name: Deploy API
         run: pnpm --filter api exec wrangler deploy
         env:
