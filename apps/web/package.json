@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy cloudflare"
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy"
   },
   "dependencies": {
     "@music-app/shared": "workspace:*",
