@@ -12,7 +12,13 @@ export async function insertTrack(
   db: D1Database,
   input: CreateTrackInput
 ) {
-  const { title, artist, audio_url, cover_url = null } = input;
+  const {
+    title,
+    artist,
+    genre,
+    audio_url,
+    cover_url = null,
+  } = input;
 
   return db
     .prepare(
@@ -20,13 +26,14 @@ export async function insertTrack(
       INSERT INTO tracks (
         title,
         artist,
+        genre,
         audio_url,
         cover_url
       )
-      VALUES (?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?)
       `
     )
-    .bind(title, artist, audio_url, cover_url)
+    .bind(title, artist, genre, audio_url, cover_url)
     .run();
 }
 
@@ -45,7 +52,13 @@ export async function updateTrackById(
   id: number,
   input: CreateTrackInput
 ) {
-  const { title, artist, audio_url, cover_url = null } = input;
+  const {
+    title,
+    artist,
+    genre,
+    audio_url,
+    cover_url = null,
+  } = input;
 
   return db
     .prepare(
@@ -53,12 +66,13 @@ export async function updateTrackById(
       UPDATE tracks
       SET title = ?,
           artist = ?,
+          genre = ?,
           audio_url = ?,
           cover_url = ?
       WHERE id = ?
       `
     )
-    .bind(title, artist, audio_url, cover_url, id)
+    .bind(title, artist, genre, audio_url, cover_url, id)
     .run();
 }
 
@@ -86,12 +100,14 @@ export async function findTracksPaginated(
         `
         SELECT *
         FROM tracks
-        WHERE title LIKE ? OR artist LIKE ?
+        WHERE title LIKE ?
+           OR artist LIKE ?
+           OR genre LIKE ?
         ORDER BY created_at DESC
         LIMIT ? OFFSET ?
         `
       )
-      .bind(q, q, limit, offset)
+      .bind(q, q, q, limit, offset)
       .all<Track>();
 
     return results;
@@ -124,10 +140,12 @@ export async function countTracks(
         `
         SELECT COUNT(*) as total
         FROM tracks
-        WHERE title LIKE ? OR artist LIKE ?
+        WHERE title LIKE ?
+           OR artist LIKE ?
+           OR genre LIKE ?
         `
       )
-      .bind(q, q)
+      .bind(q, q, q)
       .first<{ total: number }>();
 
     return row?.total ?? 0;

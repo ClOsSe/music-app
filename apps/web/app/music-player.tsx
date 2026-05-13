@@ -68,12 +68,13 @@ export function MusicPlayer({ tracks }: Props) {
               <p className="truncate text-sm text-zinc-400">
                 {currentTrack.artist}
               </p>
+              <p className="mt-1 text-xs text-zinc-500">{currentTrack.genre}</p>
             </div>
 
             <audio
               controls
               autoPlay
-              className="w-full sm:w-[520px]"
+              className="w-full sm:w-130"
               src={`${API_URL}/media/tracks/${currentTrack.id}/stream`}
             />
           </div>

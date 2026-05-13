@@ -69,6 +69,7 @@ export default async function AdminPage({ searchParams }: Props) {
                 <div>
                   <p className="font-medium">{track.title}</p>
                   <p className="text-sm text-gray-500">{track.artist}</p>
+                  <p className="mt-1 text-xs text-zinc-500">{track.genre}</p>
                   <AudioPreview trackId={track.id} />
                 </div>
 

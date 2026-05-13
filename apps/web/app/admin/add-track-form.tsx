@@ -1,26 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { createTrack } from "../lib/tracks-api";
 import { useRouter } from "next/navigation";
+
+import { createTrack } from "../lib/tracks-api";
+
 export function AddTrackForm() {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
+  const [genre, setGenre] = useState("Pop");
   const [audioUrl, setAudioUrl] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
+
   const router = useRouter();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const token = localStorage.getItem("token");
+
     if (!token) {
       alert("Please login first");
       return;
     }
+
     await createTrack({
       title,
       artist,
+      genre,
       audio_url: audioUrl,
       cover_url: coverUrl || null,
     });
@@ -29,6 +36,7 @@ export function AddTrackForm() {
 
     setTitle("");
     setArtist("");
+    setGenre("Pop");
     setAudioUrl("");
     setCoverUrl("");
   }
@@ -51,6 +59,19 @@ export function AddTrackForm() {
           value={artist}
           onChange={(e) => setArtist(e.target.value)}
         />
+      </div>
+
+      <div>
+        <select
+          className="w-full rounded-md border p-2"
+          value={genre}
+          onChange={(e) => setGenre(e.target.value)}
+        >
+          <option value="Pop">Pop</option>
+          <option value="Traditional">Traditional</option>
+          <option value="Rap">Rap</option>
+          <option value="Rock">Rock</option>
+        </select>
       </div>
 
       <div>

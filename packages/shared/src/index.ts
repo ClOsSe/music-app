@@ -6,6 +6,7 @@ export type Track = {
   id: number;
   title: string;
   artist: string;
+  genre: string;
   audio_url: string;
   cover_url: string | null;
   created_at: string;
@@ -14,6 +15,7 @@ export type Track = {
 export type CreateTrackInput = {
   title: string;
   artist: string;
+  genre: string;
   audio_url: string;
   cover_url?: string | null;
 };

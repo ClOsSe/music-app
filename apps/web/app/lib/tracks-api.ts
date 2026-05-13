@@ -1,5 +1,5 @@
 import type {
-   ApiSuccess,
+  ApiSuccess,
   CreateTrackInput,
   CreateTrackResponse,
   DeleteTrackResponse,
@@ -14,25 +14,6 @@ export function getTracks() {
   return apiFetch<Track[]>("/tracks");
 }
 
-export function createTrack(input: CreateTrackInput) {
-  return apiFetch<ApiSuccess<CreateTrackResponse>>("/tracks", {
-    method: "POST",
-    body: JSON.stringify(input),
-  });
-}
-
-export function updateTrack(id: number, input: CreateTrackInput) {
-  return apiFetch<ApiSuccess<UpdateTrackResponse>>(`/tracks/${id}`, {
-    method: "PUT",
-    body: JSON.stringify(input),
-  });
-}
-
-export function deleteTrack(id: number) {
-  return apiFetch<ApiSuccess<DeleteTrackResponse>>(`/tracks/${id}`, {
-    method: "DELETE",
-  });
-}
 export function getTracksPaginated(params: {
   search?: string;
   page?: number;
@@ -54,5 +35,34 @@ export function getTracksPaginated(params: {
 
   return apiFetch<PaginatedTracksResponse>(
     `/tracks?${searchParams.toString()}`
+  );
+}
+
+export function createTrack(input: CreateTrackInput) {
+  return apiFetch<ApiSuccess<CreateTrackResponse>>("/tracks", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateTrack(
+  id: number,
+  input: CreateTrackInput
+) {
+  return apiFetch<ApiSuccess<UpdateTrackResponse>>(
+    `/tracks/${id}`,
+    {
+      method: "PUT",
+      body: JSON.stringify(input),
+    }
+  );
+}
+
+export function deleteTrack(id: number) {
+  return apiFetch<ApiSuccess<DeleteTrackResponse>>(
+    `/tracks/${id}`,
+    {
+      method: "DELETE",
+    }
   );
 }
