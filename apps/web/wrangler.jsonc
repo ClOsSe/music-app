@@ -4,6 +4,9 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-05-12",
   "compatibility_flags": ["nodejs_compat"],
+  "vars": {
+    "NEXT_PUBLIC_API_URL": "https://api.webinaexpert.workers.dev",
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
