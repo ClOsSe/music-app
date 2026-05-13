@@ -1,18 +1,56 @@
 "use client";
 
-import { useState } from "react";
-import type { Genre, Track } from "@music-app/shared";
+import { useEffect, useState } from "react";
+import type { Genre, PaginatedTracksResponse, Track } from "@music-app/shared";
 
 import { API_URL } from "./lib/api";
 
 type Props = {
-  tracks: Track[];
-  genres: Genre[];
   activeGenre: string;
 };
 
-export function MusicPlayer({ tracks, genres, activeGenre }: Props) {
+export function MusicPlayer({ activeGenre }: Props) {
+  const [tracks, setTracks] = useState<Track[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
   const [currentTrack, setCurrentTrack] = useState<Track | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      setIsLoading(true);
+
+      const searchParams = new URLSearchParams();
+
+      searchParams.set("page", "1");
+      searchParams.set("limit", "20");
+
+      if (activeGenre && activeGenre !== "All") {
+        searchParams.set("genre", activeGenre);
+      }
+
+      const [tracksRes, genresRes] = await Promise.all([
+        fetch(`${API_URL}/tracks?${searchParams.toString()}`),
+        fetch(`${API_URL}/genres`),
+      ]);
+
+      if (!tracksRes.ok || !genresRes.ok) {
+        throw new Error("Failed to load music data");
+      }
+
+      const tracksData = (await tracksRes.json()) as PaginatedTracksResponse;
+      const genresData = (await genresRes.json()) as Genre[];
+
+      setTracks(tracksData.items);
+      setGenres(genresData);
+      setIsLoading(false);
+    }
+
+    loadData().catch(() => {
+      setTracks([]);
+      setGenres([]);
+      setIsLoading(false);
+    });
+  }, [activeGenre]);
 
   return (
     <div className="min-h-screen bg-zinc-950 px-6 py-8 text-white">
@@ -21,7 +59,8 @@ export function MusicPlayer({ tracks, genres, activeGenre }: Props) {
           <h1 className="text-3xl font-bold">Music App</h1>
           <p className="mt-2 text-sm text-zinc-400">Listen to public tracks</p>
         </header>
-        <div className="mt-4 flex flex-wrap gap-2">
+
+        <div className="mb-8 flex flex-wrap gap-2">
           {["All", ...genres.map((genre) => genre.name)].map((genre) => {
             const href =
               genre === "All" ? "/" : `/?genre=${encodeURIComponent(genre)}`;
@@ -44,7 +83,11 @@ export function MusicPlayer({ tracks, genres, activeGenre }: Props) {
           })}
         </div>
 
-        {tracks.length === 0 ? (
+        {isLoading ? (
+          <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-400">
+            Loading...
+          </div>
+        ) : tracks.length === 0 ? (
           <div className="rounded-xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-400">
             No tracks found.
           </div>
@@ -69,6 +112,7 @@ export function MusicPlayer({ tracks, genres, activeGenre }: Props) {
                   <p className="line-clamp-1 text-sm text-zinc-400">
                     {track.artist}
                   </p>
+                  <p className="mt-1 text-xs text-zinc-500">{track.genre}</p>
                 </div>
 
                 <button
